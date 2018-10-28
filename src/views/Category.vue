@@ -1,7 +1,7 @@
 <template>
-  <div id="category" v-if="category">
+  <div id="category">
     <div class="category__header">
-      <h1>{{ category.title }}</h1>
+      <h1>{{ category.name }}</h1>
       <router-link :to="{ path: '/'}">Назад</router-link>
     </div>
     <div class="category__body" v-bind:style="{ borderTop: '1em solid' + category.color}">
@@ -20,17 +20,7 @@
 </template>
 
 <script>
-var Categories = [
-  { id:1, title: 'сельское хозяйство', count: 34, color: '#e94867'},
-  { id:2, title: 'лесничества', count: 20, color: '#f1c40f'},
-  { id:3, title: 'карьеры и шахты', count: 12, color: '#f87979'},
-  { id:4, title: 'заводы', count: 23, color: '#16a085'},
-  { id:5, title: 'транспортные предприятия', count: 15, color: '#f39369'},
-  { id:6, title: 'строительные компании', count: 40, color: '#2980b9'},
-  { id:7, title: 'компании по ремонту дорог', count: 4, color: '#e67e22'}
-]
-var Columns = ['name','address','contacts']
-var Firms = [{name:'Roschen', address:'Киев',contacts:'01'}]
+var Columns = ['name', 'address', 'contacts' ]
 
 import TableGrid from './../components/TableGrid.vue'
 
@@ -41,17 +31,23 @@ import TableGrid from './../components/TableGrid.vue'
     },
     data () {
       return {
-        title: 'Я на странице категории',
-        categories: Categories,
-        category: null,
+        category:'',
         columns: Columns,
-        firms: Firms,
+        firms: [],
+        color:'#000',
         searchQuery: '',
       }
     },
-    created () {
-      var categoryId = this.$route.params.id
-      this.category = this.categories[categoryId]
+
+    mounted () {
+      let categoryId = this.$route.params.id
+      this.axios
+          .get('https://worldinfo.com.ua/api/firms',
+              {params: {category_id: categoryId}}).then((response) => {
+                  this.category = response.data.category,
+                  this.firms = response.data.firms
+
+      })
     }
   }
 </script>
@@ -84,7 +80,7 @@ import TableGrid from './../components/TableGrid.vue'
 .category__body{
   background-color: $white;
   width:100%;
-  height:100vh;
+  min-height:100vh;
   padding:3em 6em;
   box-shadow: $shadow1;
 

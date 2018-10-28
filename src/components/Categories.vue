@@ -1,72 +1,62 @@
 <template>
-  <div id="categories">
     <div class="flex-container row">
-      <div v-for= "(category, index) in categories" class="flex-1 category_item" v-bind:style="{ borderBottom: '1rem solid'+ category.color}">
-        <h3>{{ category.title }}</h3>
-        <span v-bind:style="{ color: category.color}">{{ category.count }}</span>
-        <hr>
-        <div><router-link :to="{ name: 'category', params: { id: index} }">Нажмите,</router-link> чтобы посмотреть все предприятия данной области</div>
-      </div>
+        <router-link v-for= "category in categories" class="flex-1 category_item" :to="{ name: 'category', params: { id: category.id, name: category.name} }">
+          <span :style="{ background: category.color}">{{ category.count }}</span>
+          <p>{{ category.name }}</p>
+        </router-link>
     </div>
-  </div>
 </template>
 
 <script>
 export default {
   name: "categories",
-  data () {
-    return {
-      categories: [
-        {
-          id:1,
-          title: 'сельское хозяйство',
-          count: 34,
-          color: '#e94867'
-        },
-        {
-          id:2,
-          title: 'лесничества',
-          count: 20,
-          color: '#f1c40f'
-        },
-        {
-          id:3,
-          title: 'карьеры и шахты',
-          count: 12,
-          color: '#f87979'
-        },
-        {
-          id:4,
-          title: 'заводы',
-          count: 23,
-          color: '#16a085'
-        },
-        {
-          id:5,
-          title: 'транспортные предприятия',
-          count: 15,
-          color: '#f39369'
-        },
-        {
-          id:6,
-          title: 'строительные компании',
-          count: 40,
-          color: '#2980b9'
-        },
-        {
-          id:7,
-          title: 'компании по ремонту дорог',
-          count: 4,
-          color: '#e67e22'
-        }
-      ]
+  data(){
+    return{
+        categories:'',
+        errored:false
     }
+  },
+  mounted(){
+      this.axios
+          .get('https://worldinfo.com.ua/api/categories')
+          .then((response) => {
+              this.categories = response.data
+          })
+          .catch(error => {
+              console.log(error);
+              this.errored = true;
+          });
   }
 }
 </script>
 <style lang="scss" scoped>
+@import '../assets/scss/variables';
 .category_item{
-  padding: 2em;
-}
+  display:flex;
+  flex-direction: row;
+  overflow: hidden;
+  align-items:center;
+  color:$main-color;
 
+  margin: .5em;
+  box-shadow: $shadow1;
+  background-color: #fff;
+  width: calc(15% - 2em);
+  transition: all .3s ease-in;
+  &:hover{
+    transform: translateY(-.2em);
+    box-shadow: $shadow2;
+  }
+  p {
+    padding: 0 .5em;
+  }
+  span {
+    padding:1em 1.5em;
+    color: #fff;
+    font-weight: 600;
+  }
+  .fa-plus {
+    font-size: 1.2em;
+  }
+}
 </style>
