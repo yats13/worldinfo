@@ -41,7 +41,7 @@ import TableGrid from './../components/TableGrid.vue'
 
     mounted () {
       let categoryId = this.$route.params.id
-      this.axios
+      axios
           .get('https://worldinfo.com.ua/api/firms',
               {params: {category_id: categoryId}}).then((response) => {
                   this.category = response.data.category,

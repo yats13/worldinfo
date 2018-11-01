@@ -1,6 +1,6 @@
 <template>
     <div class="flex-container row">
-        <router-link v-for= "category in categories" class="flex-1 category_item" :to="{ name: 'category', params: { id: category.id, name: category.name} }">
+        <router-link v-for= "category in categories" class="flex-1 category_item" :key="category.id" :to="{ name: 'category', params: { id: category.id, name: category.name} }">
           <span :style="{ background: category.color}">{{ category.count }}</span>
           <p>{{ category.name }}</p>
         </router-link>
@@ -17,7 +17,7 @@ export default {
     }
   },
   mounted(){
-      this.axios
+      axios
           .get('https://worldinfo.com.ua/api/categories')
           .then((response) => {
               this.categories = response.data

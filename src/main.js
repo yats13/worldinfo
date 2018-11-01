@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import axios from 'axios'
-import VueAxios from 'vue-axios'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faHome } from '@fortawesome/free-solid-svg-icons'
@@ -48,12 +47,11 @@ const router = new VueRouter({
 		}
 	}
 })
-
+window.axios = axios
 router.beforeEach((to, from, next) => {
 	document.title = to.meta.title
 	next()
 })
-Vue.use(VueAxios, axios)
 new Vue({
 	el: '#app',
 	render: h => h(App),

@@ -54,7 +54,7 @@ import Charts from  './../components/Chart.vue'
       }
     },
     mounted(){
-      this.axios
+      axios
         .get('https://worldinfo.com.ua/api/categories')
         .then((response) => {
             response.data.forEach((item) => {
