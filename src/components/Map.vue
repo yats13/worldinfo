@@ -1,121 +1,155 @@
 <template>
-    <div>
-    <l-map
-            :center="[47,32]"
-            :zoom="5"
-            style="height: 450px;"
-            :options="mapOptions">
-        <l-choropleth-layer
-                :data="Data"
-                titleKey="name"
-                idKey="map_id"
-                :value="value"
-                :extraValues="extraValues"
-                :geojson="ukraine"
-                geojsonIdKey="map_id"
-                currentStrokeWidth=1
-                :colorScale="colorScale">
-            <template slot-scope="props">
-                <l-info-control
-                        :item="props.currentItem"
-                        :unit="props.unit"
-                        title="Предприятия"
-                        placeholder="Выберите область"/>
-                <l-reference-chart
-                        title="Girls school enrolment"
-                        :colorScale="colorScale"
-                        :min="props.min"
-                        :max="props.max"
-                        position="bottomright"/>
-            </template>
-        </l-choropleth-layer>
-    </l-map>
-    </div>
+<div id="map" class="map">
+<h3>{{title}}</h3>
+<div id="lmap"></div>
+</div>
+    
 </template>
 <script>
-import { InfoControl, ReferenceChart, ChoroplethLayer } from 'vue-choropleth'
-import { LMap } from 'vue2-leaflet';
-import ukraine from '../assets/map/Ukraine.json'
+import L from "leaflet";
+import ukraine from "../assets/map/Ukraine.json";
 export default {
-    name:'Map',
-    components: {
-        LMap,
-        'l-info-control': InfoControl,
-        'l-reference-chart': ReferenceChart,
-        'l-choropleth-layer': ChoroplethLayer
+  name: "Map",
+  data() {
+    return {
+      title: "Выберите регион",
+      mapData: [],
+      ukraine,
+      geojson: null,
+      currentItem: null,
+      countFirms: [],
+      currentStrokeColor: "3d3213",
+      errored: ""
+    };
+  },
+  methods: {
+    highlightFeature(e) {
+      const layer = e.target;
+      layer.setStyle({
+        weight: 2,
+        color: "#fff",
+        dashArray: "",
+        fillOpacity: 0.7
+      });
+      this.currentItem = layer.feature.properties.map_id;
+      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+      }
     },
-    data() {
-        return {
-            Data:[],
-            geojson:'',
-            ukraine,
-            colorScale: [],
-            value: {
-                key: "id",
-                metric: "% girls"
-            },
-            extraValues: [{
-                key: "map_id",
-                metric: "% boys"
-            }],
-            mapOptions: {
-                attributionControl: false
-            },
-            currentStrokeColor: '3d3213',
-            errored:''
-        }
+    renderColors(regionId) {
+      axios
+        .get("https://worldinfo.com.ua/api/map", {
+          params: { region_id: regionId }
+        })
+        .then(response => {
+          return response.data;
+        })
+        .catch(error => {
+          console.log(error);
+          this.errored = true;
+        });
     },
-    methods:{
-        renderMapData (){
-            this.axios
-            .get('https://worldinfo.com.ua/api/regions')
-            .then((response) => {
-                this.Data = response.data.data;
-            })
-            .catch(error => {
-                console.log(error);
-                this.errored = true;
-            });
-        },
-        renderColors (){
-            this.axios
-            .get('https://worldinfo.com.ua/api/categories')
-            .then((response) => {
-                response.data.forEach((item) => {
-                    this.colorScale.push(item.color);
-                });
-            })
-            .catch(error => {
-                console.log(error);
-                this.errored = true;
-            });
-        },
-        renderGeoJson(){
-            let geojson = this.ukraine;
-            this.geojson = geojson
-        }
+    getColor(d) {
+      return d > 1000
+        ? "#800026"
+        : d > 500
+          ? "#BD0026"
+          : d > 200
+            ? "#E31A1C"
+            : d > 100
+              ? "#FC4E2A"
+              : d > 50
+                ? "#FD8D3C"
+                : d > 20
+                  ? "#FEB24C"
+                  : d > 10
+                    ? "#FED976"
+                    : "#FFEDA0";
     },
-    mounted (){
-        this.renderMapData()
-        this.renderColors()
-        this.renderGeoJson()
+    style(feature) {
+      const mapId = feature.properties.map_id;
+      const color = this.renderColors(mapId);
+      return {
+        fillColor: this.getColor(color),
+        weight: 2,
+        opacity: 1,
+        color: "white",
+        dashArray: "3",
+        fillOpacity: 0.7
+      };
+    },
+    resetHighlight(e) {
+      this.geojson.resetStyle(e.target);
+      this.title = "Выберите регион";
+    },
+    onEachFeature(feature, layer) {
+      layer.on({
+        mouseover: this.highlightFeature,
+        mouseout: this.resetHighlight
+      });
+    },
+    renderMap() {
+      const map = L.map("lmap", {
+        center: [48, 31],
+        zoom: 5
+      });
+      this.geojson = L.geoJSON(this.ukraine, {
+        style: this.style,
+        onEachFeature: this.onEachFeature
+      }).addTo(map);
+      return this.geojson;
     }
-}
+  },
+  watch: {
+    currentItem: function(val) {
+      axios
+        .get("https://worldinfo.com.ua/api/region", {
+          params: { map_id: val }
+        })
+        .then(response => {
+          this.mapData = response.data;
+          this.title = response.data[0].name;
+        })
+        .catch(error => {
+          console.log(error);
+          this.errored = true;
+        });
+    }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.renderMap();
+    }, 400);
+  }
+};
 </script>
 <style lang="scss">
-    @import "~leaflet/dist/leaflet.css";
-    .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar{
-        border:none;
-    }
-    .leaflet-touch .leaflet-bar a{
-        line-height: 28px;
-    }
-    .leaflet-touch .leaflet-bar a:last-child{
-        border-bottom-left-radius: 50px;
-        border-bottom-right-radius: 50px;
-    }
-    .leaflet-touch .leaflet-bar a:first-child{
-        border-top-left-radius: 50px;
-        border-top-right-radius: 50px;
-    }
+@import "~leaflet/dist/leaflet.css";
+@import "../assets/scss/variables";
+#lmap {
+  height: 320px;
+  padding: 1em;
+}
+.leaflet-container {
+  background-color: $white;
+}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+  border: none;
+}
+.leaflet-touch .leaflet-bar a {
+  line-height: 2em;
+  font-size: 1.5rem;
+  border-color: $inactive;
+}
+.leaflet-touch .leaflet-bar a:last-child {
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  box-shadow: $shadow1;
+}
+.leaflet-touch .leaflet-bar a:first-child {
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  box-shadow: $shadow1;
+}
 </style>

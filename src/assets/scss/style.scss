@@ -1,5 +1,5 @@
-@import 'variables';
-@import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,600,900&subset=cyrillic-ext');
+@import "variables";
+@import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,600,900&subset=cyrillic-ext");
 html,
 body {
   background-color: $inactive;
@@ -17,7 +17,7 @@ body {
 
 #app {
   color: $main-color;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   //font-family: 'Avenir', Helvetica, Arial, sans-serif;
   position: relative;
 }
@@ -28,13 +28,13 @@ h2 {
 }
 h3 {
   font-size: 1.3em;
-  text-transform:capitalize;
+  text-transform: capitalize;
   font-weight: 400;
   position: relative;
   margin-bottom: 2em;
   padding: 1em;
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     width: 50%;
@@ -54,10 +54,10 @@ li {
 }
 
 hr {
-   border: 0;
-   height: 0;
-   border-top: 1px solid rgba(0, 0, 0, 0.1);
-   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 a {
@@ -75,15 +75,15 @@ a {
   height: 5em;
   left: 5em;
   margin: 0 auto;
-  padding: .5em 3em;
+  padding: 0.5em 3em;
   width: 16em;
 
   a {
-    display:block;
+    display: block;
     padding-top: 1em;
-    img{
-      width:100%;
-      height:auto;
+    img {
+      width: 100%;
+      height: auto;
     }
   }
 }
@@ -102,13 +102,13 @@ a {
 }
 
 .flex-3 {
-  flex-basis:calc(33% - 2em);
+  flex-basis: calc(33% - 2em);
 }
 
 .sidebar {
   display: flex;
   position: fixed;
-  top:calc(50% - 100px);
+  top: calc(50% - 100px);
   margin-left: 2em;
   background-color: #fff;
   box-shadow: $shadow1;
@@ -121,34 +121,33 @@ a {
   a {
     position: relative;
     font-size: 1.3em;
-    padding: .5em .3em;
+    padding: 0.5em 0.3em;
     color: $inactive;
 
-    &::before{
-      content: '';
+    &::before {
+      content: "";
       position: absolute;
       background: $gradient;
       width: 0;
-      height: .2em;
+      height: 0.2em;
       bottom: 0;
       left: 0;
-      transition: width .5s ease-in;
+      transition: width 0.5s ease-in;
     }
-    &:hover{
-      color:$main-color;
-      &::before{
-        width:100%;
+    &:hover {
+      color: $main-color;
+      &::before {
+        width: 100%;
       }
     }
   }
 }
 
-
 .sidebar__wrapper {
   height: 100%;
   &::before {
     position: absolute;
-    content: '';
+    content: "";
     top: 0;
     bottom: 0;
     left: 4em;
@@ -156,9 +155,7 @@ a {
     background-color: rgba(0, 0, 0, 0.1);
   }
 }
-.sidebar__active{
 
-}
 .chart__view {
   padding: 0 5em;
 }

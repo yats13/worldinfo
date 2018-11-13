@@ -67,10 +67,10 @@
 <div class="sidebar__wrapper">
   <nav class="sidebar">
       <router-link to="/"><font-awesome-icon icon="home" /></router-link>
-      <router-link to="/#categories"><font-awesome-icon icon="filter" /></i></router-link>
-      <a href=""><font-awesome-icon icon="envelope" /></i> </a>
-      <a href=""><font-awesome-icon icon="phone" /></i></a>
-      <a href=""><font-awesome-icon icon="angle-right" /></i></a>
+      <router-link to="/#categories"><font-awesome-icon icon="filter" /></router-link>
+      <a href=""><font-awesome-icon icon="envelope" /></a>
+      <a href=""><font-awesome-icon icon="phone" /></a>
+      <a href=""><font-awesome-icon icon="angle-right" /></a>
   </nav>
 </div>
     <router-view></router-view>

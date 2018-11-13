@@ -6,6 +6,7 @@
           @click="sortBy(key)"
           :class="{ active: sortKey == key }"
           :style="{ borderBottom: '.5em solid' + color}"
+          :key="key"
           >
           {{ key | capitalize }}
           <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
@@ -14,8 +15,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="entry in filteredData">
-        <td v-for="key in columns" :style="{ borderBottom: '1px solid' + color}">
+      <tr v-for="(entry,index) in filteredData" :key="index">
+        <td v-for="(key, index) in columns" :key="index" :style="{ borderBottom: '1px solid' + color}">
           {{entry[key]}}
         </td>
       </tr>
@@ -23,7 +24,6 @@
   </table>
 </template>
 <script>
-
 export default {
   props: {
     data: Array,
@@ -31,56 +31,60 @@ export default {
     filterKey: String,
     color: String
   },
-  data () {
-    var sortOrders = {}
-    this.columns.forEach(function (key) {
-      sortOrders[key] = 1
-    })
+  data() {
+    var sortOrders = {};
+    this.columns.forEach(function(key) {
+      sortOrders[key] = 1;
+    });
     return {
-      sortKey: '',
+      sortKey: "",
       sortOrders: sortOrders
-    }
+    };
   },
   computed: {
-    filteredData: function () {
-      var sortKey = this.sortKey
-      var filterKey = this.filterKey && this.filterKey.toLowerCase()
-      var order = this.sortOrders[sortKey] || 1
-      var data = this.data
+    filteredData: function() {
+      var sortKey = this.sortKey;
+      var filterKey = this.filterKey && this.filterKey.toLowerCase();
+      var order = this.sortOrders[sortKey] || 1;
+      var data = this.data;
       if (filterKey) {
-        data = data.filter(function (row) {
-          return Object.keys(row).some(function (key) {
-            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
-          })
-        })
+        data = data.filter(function(row) {
+          return Object.keys(row).some(function(key) {
+            return (
+              String(row[key])
+                .toLowerCase()
+                .indexOf(filterKey) > -1
+            );
+          });
+        });
       }
       if (sortKey) {
-        data = data.slice().sort(function (a, b) {
-          a = a[sortKey]
-          b = b[sortKey]
-          return (a === b ? 0 : a > b ? 1 : -1) * order
-        })
+        data = data.slice().sort(function(a, b) {
+          a = a[sortKey];
+          b = b[sortKey];
+          return (a === b ? 0 : a > b ? 1 : -1) * order;
+        });
       }
-      return data
+      return data;
     }
   },
   filters: {
-    capitalize: function (str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
+    capitalize: function(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
     }
   },
   methods: {
-    sortBy: function (key) {
-      this.sortKey = key
-      this.sortOrders[key] = this.sortOrders[key] * -1
+    sortBy: function(key) {
+      this.sortKey = key;
+      this.sortOrders[key] = this.sortOrders[key] * -1;
     }
   }
-}
+};
 </script>
 <style lang="scss">
 @import "../assets/scss/variables";
 table {
-  width:100%;
+  width: 100%;
   border-radius: 3px;
   background-color: #fff;
 }
@@ -97,7 +101,8 @@ td {
   background-color: #f9f9f9;
 }
 
-th, td {
+th,
+td {
   min-width: 120px;
   padding: 10px 20px;
 }

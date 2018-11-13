@@ -1,20 +1,17 @@
 <template>
   <div id="index">
       <section class="second_screen">
-          <h2>{{ header_2 }}</h2>
+          <h2>{{ header_region }}</h2>
           <categories></categories>
       </section>
 <section class="first_screen">
-    <h2>{{ header_1 }}</h2>
     <div class="flex-container row">
-      <div id="map" class="map">
-        <h3>{{ map_title}}</h3>
-      <Map />
-      </div>  
+      
+        <Map/>
       <div id="chart" class="flex-1">
         <h3>{{statistic.title}}</h3>
           <div class="chart__view">
-            <charts :labels="chartLabels"></charts>
+            <chart/>
           </div>
         <hr>
         <div class="help">
@@ -26,62 +23,51 @@
   </div>
 </template>
 <script>
+import Categories from "./../components/Categories.vue";
+import Map from "./../components/Map.vue";
+import Chart from "./../components/Chart.vue";
 
-import Categories from  './../components/Categories.vue'
-import Map from  './../components/Map.vue'
-import Charts from  './../components/Chart.vue'
+export default {
+  name: "index",
 
-  export default {
-    name:'index',
-    components: {
-      Categories,
-      Charts,
-      Map
-    },
-    data () {
-      return {
-            title: 'Я на странице индекса',
-            map_title:'',
-            header_1: 'Выберите регион',
-            header_2: 'Выберите отрасль',
-            statistic:{
-                title:'Общая информация',
-                body:''
-            },
-          help_text:'',
-          chartLabels:[],
-          errored:false,
-      }
-    },
-    mounted(){
-      axios
-        .get('https://worldinfo.com.ua/api/categories')
-        .then((response) => {
-            response.data.forEach((item) => {
-                this.chartLabels.push(item.name)
-            });
-        })
-        .catch(error => {
-            console.log(error);
-            this.errored = true;
-        });
-    }
+  components: {
+    Categories,
+    Chart,
+    Map
+  },
+  data() {
+    return {
+      title: "Я на странице индекса",
+      map_title: "",
+      header_map: "Выберите регион",
+      header_region: "Выберите отрасль",
+      statistic: {
+        title: "Общая информация",
+        body: ""
+      },
+      help_text: "",
+      errored: false
+    };
   }
+};
 </script>
 <style lang="scss" scoped>
 @import "../assets/scss/variables";
-#index{
+#index {
   margin: 0 auto;
   padding: 0 10em;
   overflow-x: hidden;
 }
-#chart{
-  width:calc(50% - 2em);
-  margin:1em;
+#chart {
+  width: calc(50% - 2em);
+  margin: 1em;
   background-color: $white;
   box-shadow: $shadow1;
 }
-#map{
-  width:calc(50% - 2em);
-}  
+#map {
+  width: calc(50% - 2em);
+  margin: 1em;
+  background-color: $white;
+  box-shadow: $shadow1;
+}
 </style>
